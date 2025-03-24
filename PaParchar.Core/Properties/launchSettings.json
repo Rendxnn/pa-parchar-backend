@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PaParchar.Core": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
