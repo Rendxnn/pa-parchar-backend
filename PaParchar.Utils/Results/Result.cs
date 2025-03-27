@@ -1,4 +1,5 @@
-﻿namespace PaParchar.Utils.Results
+﻿
+namespace PaParchar.Utils.Results
 {
     public class Result<T> : IResult<T> where T : notnull
     {
@@ -125,6 +126,67 @@
                 Message = message,
                 ExceptionMessage = exceptionMessage
             };
+        }
+
+
+        public static async Task<IResult<T>> SuccessAsync()
+        {
+            return await Task.FromResult(Success());
+        }
+
+        public static async Task<IResult<T>> SuccessAsync(T data)
+        {
+            return await Task.FromResult(Success(data));
+        }
+
+        public static async Task<IResult<T>> SuccessAsync(T data, string message)
+        {
+            return await Task.FromResult(Success(data, message));
+        }
+
+        public static async Task<IResult<T>> FailureAsync()
+        {
+            return await Task.FromResult(Failure());
+        }
+
+        public static async Task<IResult<T>> FailureAsync(T data)
+        {
+            return await Task.FromResult(Failure(data));
+        }
+
+        public static async Task<IResult<T>> FailureAsync(IResult<T> result)
+        {
+            return await Task.FromResult(Failure(result));
+        }
+
+        public static async Task<IResult<T>> FailureAsync(string message)
+        {
+            return await Task.FromResult(Failure(message));
+        } 
+
+        public static async Task<IResult<T>> FailureAsync(string message, string exceptionMessage)
+        {
+            return await Task.FromResult(Failure(message, exceptionMessage));
+        }
+
+        public static async Task<IResult<T>> NotFoundAsync()
+        {
+            return await Task.FromResult(NotFound());
+        }
+
+        public static async Task<IResult<T>> NotFoundAsync(T data)
+        {
+            return await Task.FromResult(NotFound(data));
+        }
+
+        public static async Task<IResult<T>> NotFoundAsync(string message)
+        {
+            return await Task.FromResult(NotFound(message));
+        }
+
+        public static async Task<IResult<T>> NotFoundAsync(string message, string exceptionMessage)
+        {
+            return await Task.FromResult(NotFound(message, exceptionMessage));
         }
     }
 }

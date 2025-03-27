@@ -1,4 +1,5 @@
-﻿using PaParchar.Utils.Results;
+﻿using PaParchar.Application.DTOs.Parche;
+using PaParchar.Utils.Results;
 using System.Linq.Expressions;
 
 namespace PaParchar.Application.Interfaces.Services

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PaParchar.Domain\PaParchar.Domain.csproj" />
     <ProjectReference Include="..\PaParchar.Utils\PaParchar.Utils.csproj" />
   </ItemGroup>
 
