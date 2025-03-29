@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaParchar.Domain.Entities
 {
-    public class Parche : _BaseEntity<Guid>
+    public class Parche
+        : _BaseEntity<Guid>
     {
         [Key]
         [Column("parche_id")]

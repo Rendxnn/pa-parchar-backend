@@ -1,4 +1,5 @@
-﻿namespace PaParchar.Utils.Results
+﻿
+namespace PaParchar.Utils.Results
 {
     public interface IResult<T>
     {

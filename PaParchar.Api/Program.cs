@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using PaParchar.Application.Interfaces.Repositories;
 using PaParchar.Application.Interfaces.Services;
@@ -16,7 +17,6 @@ builder.Services.AddTransient(typeof(_IBaseService<,>), typeof(_BaseService<,>))
 builder.Services
     .AddTransient<IParcheService, ParcheService>()
     .AddTransient<IParcheRepository, ParcheRepository>();
-
 
 builder.Services.AddControllers();
 

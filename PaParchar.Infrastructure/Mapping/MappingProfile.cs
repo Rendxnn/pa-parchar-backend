@@ -11,6 +11,10 @@ namespace PaParchar.Infrastructure.Mapping
         {
             // Parche
             CreateMap<Parche, ListParcheDto>();
+
+            CreateMap<Parche, ShowParcheDto>();
+
+            CreateMap<CreateParcheDto, Parche>();
         }
     }
 }
