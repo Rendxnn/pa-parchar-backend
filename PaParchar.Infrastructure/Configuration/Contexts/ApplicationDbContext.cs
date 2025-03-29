@@ -13,6 +13,7 @@ namespace PaParchar.Infrastructure.Configuration.Contexts
         }
 
         public DbSet<Parche> Parches { get; set; }
+        public DbSet<ParcheHorario> ParchesHorarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

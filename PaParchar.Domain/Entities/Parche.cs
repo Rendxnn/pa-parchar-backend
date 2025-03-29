@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaParchar.Domain.Entities
 {
+    [Table("parches")]
     public class Parche
         : _BaseEntity<Guid>
     {
@@ -23,9 +24,6 @@ namespace PaParchar.Domain.Entities
         [StringLength(200)]
         [Column("ubicacion")]
         public string? Ubicacion { get; set; }
-
-        [Column("duracion")]
-        public int? Duracion { get; set; }
 
         [Column("capacidad")]
         public int? Capacidad { get; set; }
@@ -53,8 +51,12 @@ namespace PaParchar.Domain.Entities
         public EstadoParche Estado { get; set; } = EstadoParche.Creado;
 
         [Required]
-        [Column("fecha_parche")]
-        public DateTime FechaParche { get; set; }
+        [Column("fecha_inicio")]
+        public DateTime FechaInicio { get; set; }
+
+        [Required]
+        [Column("fecha_fin")]
+        public DateTime FechaFin { get; set; }
 
         [Required]
         [Column("fecha_creacion")]
@@ -62,6 +64,9 @@ namespace PaParchar.Domain.Entities
 
         [Column("ultima_actualizacion")]
         public DateTime? UltimaActualizacion { get; set; }
+
+        // Relación con horarios
+        public virtual ICollection<ParcheHorario>? Horarios { get; set; }
     }
 
     public enum EstadoParche

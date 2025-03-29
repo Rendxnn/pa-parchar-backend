@@ -12,8 +12,8 @@ using PaParchar.Infrastructure.Configuration.Contexts;
 namespace PaParchar.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250327031748_CreateParche")]
-    partial class CreateParche
+    [Migration("20250329224536_AddParcheAndHorario")]
+    partial class AddParcheAndHorario
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,10 +41,6 @@ namespace PaParchar.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("descripcion");
 
-                    b.Property<int?>("Duracion")
-                        .HasColumnType("integer")
-                        .HasColumnName("duracion");
-
                     b.Property<bool>("EsPrivado")
                         .HasColumnType("boolean")
                         .HasColumnName("es_privado");
@@ -57,9 +53,13 @@ namespace PaParchar.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime>("FechaParche")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_parche");
+                        .HasColumnName("fecha_fin");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_inicio");
 
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -101,7 +101,62 @@ namespace PaParchar.Infrastructure.Migrations
 
                     b.HasKey("ParcheId");
 
-                    b.ToTable("Parches");
+                    b.ToTable("parches");
+                });
+
+            modelBuilder.Entity("PaParchar.Domain.Entities.ParcheHorario", b =>
+                {
+                    b.Property<Guid>("HorarioId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("horario_id");
+
+                    b.Property<string>("Dia")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)")
+                        .HasColumnName("dia");
+
+                    b.Property<string>("HoraFin")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)")
+                        .HasColumnName("hora_fin");
+
+                    b.Property<string>("HoraInicio")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)")
+                        .HasColumnName("hora_inicio");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ParcheId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parche_id");
+
+                    b.HasKey("HorarioId");
+
+                    b.HasIndex("ParcheId");
+
+                    b.ToTable("parches_horarios");
+                });
+
+            modelBuilder.Entity("PaParchar.Domain.Entities.ParcheHorario", b =>
+                {
+                    b.HasOne("PaParchar.Domain.Entities.Parche", "Parche")
+                        .WithMany("Horarios")
+                        .HasForeignKey("ParcheId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parche");
+                });
+
+            modelBuilder.Entity("PaParchar.Domain.Entities.Parche", b =>
+                {
+                    b.Navigation("Horarios");
                 });
 #pragma warning restore 612, 618
         }

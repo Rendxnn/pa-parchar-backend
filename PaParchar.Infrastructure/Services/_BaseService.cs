@@ -134,5 +134,35 @@ namespace PaParchar.Infrastructure.Services
                 return Result<bool>.Failure($"Error al verificar la existencia del registro con Id: {id}", ex.Message);
             }
         }
+
+        public virtual async Task<IResult<TDto?>> GetProjectedByIdAsync<TDto>(ID id)
+        {
+            try
+            {
+                TDto? result = await this._repository.GetProjectedByIdAsync<TDto?>(id);
+
+                return Result<TDto?>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return await Result<TDto?>.FailureAsync($"Error obteniendo el registro con id: {id}");
+            }
+        }
+
+        public Task<IResult<IEnumerable<TDto>>> GetProjectedAsync<TDto>(Expression<Func<T, bool>>? predicate = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult<(IEnumerable<TDto> Items, int TotalCount)>> GetProjectedPagedAsync<TDto>(int page, int pageSize, Expression<Func<T, bool>>? predicate = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IResult<IEnumerable<TDto>>> GetProjectedOrderedAsync<TDto, TKey>(Expression<Func<T, TKey>> orderBy, bool ascending = true, Expression<Func<T, bool>>? predicate = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

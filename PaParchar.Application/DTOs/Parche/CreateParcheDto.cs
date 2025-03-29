@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PaParchar.Application.DTOs.Parche
 {
@@ -12,14 +11,18 @@ namespace PaParchar.Application.DTOs.Parche
 
         public string? Ubicacion { get; set; }
 
-        public int? Duracion { get; set; }
-
         public int? Capacidad { get; set; }
 
         public bool EsPrivado { get; set; } = false;
 
         public decimal? Precio { get; set; }
 
-        public DateTime FechaParche { get; set; }
+        [Required]
+        public DateTime FechaInicio { get; set; }
+
+        [Required]
+        public DateTime FechaFin { get; set; }
+
+        public ICollection<ParcheHorarioDto>? Horarios { get; set; }
     }
 }

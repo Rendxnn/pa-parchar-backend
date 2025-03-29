@@ -10,11 +10,16 @@ namespace PaParchar.Infrastructure.Mapping
         public MappingProfile()
         {
             // Parche
-            CreateMap<Parche, ListParcheDto>();
+            CreateMap<Parche, ListParcheDto>()
+                .ForMember(dest => dest.FechaParche, opt => opt.MapFrom(src => src.FechaInicio));
 
             CreateMap<Parche, ShowParcheDto>();
 
             CreateMap<CreateParcheDto, Parche>();
+
+            // ParcheHorario
+            CreateMap<ParcheHorarioDto, ParcheHorario>();
+            CreateMap<ParcheHorario, ParcheHorarioDto>();
         }
     }
 }

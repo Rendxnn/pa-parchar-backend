@@ -15,7 +15,7 @@ namespace PaParchar.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ListParcheDto>>> ListParches()
         {
-            IResult<IEnumerable<ListParcheDto>> result = await this.parcheService.GetAllProjected();
+            IResult<IEnumerable<ListParcheDto>> result = await this.parcheService.GetProjectedOrderedAsync<ListParcheDto, string>(parche => parche.Nombre, true);
 
             return result.ToHttpResponse();
         }

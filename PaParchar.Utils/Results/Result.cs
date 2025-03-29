@@ -1,7 +1,7 @@
 ﻿
 namespace PaParchar.Utils.Results
 {
-    public class Result<T> : IResult<T> where T : notnull
+    public class Result<T> : IResult<T>
     {
         public T Data { get; set; } = default!;
         public bool? Found { get; set; } = null;

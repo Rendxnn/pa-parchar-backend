@@ -21,6 +21,16 @@ namespace PaParchar.Infrastructure.Services
             try
             {
                 Parche newParche = mapper.Map<Parche>(parcheDto);
+                
+                if (parcheDto.Horarios != null && parcheDto.Horarios.Any())
+                {
+                    newParche.Horarios = new List<ParcheHorario>();
+                    foreach (var horarioDto in parcheDto.Horarios)
+                    {
+                        var horario = mapper.Map<ParcheHorario>(horarioDto);
+                        newParche.Horarios.Add(horario);
+                    }
+                }
 
                 Parche created = await _repository.AddAsync(newParche);
 
@@ -40,7 +50,7 @@ namespace PaParchar.Infrastructure.Services
         {
             try
             {
-                IEnumerable<ListParcheDto> result = await _repository.GetProjectedOrderedAsync<ListParcheDto, DateTime>(orderBy: p => p.FechaParche, ascending: true, predicate: null);
+                IEnumerable<ListParcheDto> result = await _repository.GetProjectedOrderedAsync<ListParcheDto, DateTime>(orderBy: p => p.FechaInicio, ascending: true, predicate: null);
 
                 return await Result<IEnumerable<ListParcheDto>>.SuccessAsync(result);
             }
