@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PaParchar.Application.DTOs.Parche;
+using PaParchar.Application.DTOs.Usuario;
 using PaParchar.Domain.Entities;
 
 
@@ -25,6 +26,14 @@ namespace PaParchar.Infrastructure.Mapping
             
             CreateMap<string, TimeOnly>().ConvertUsing(s => ParseTimeString(s));
             CreateMap<TimeOnly, string>().ConvertUsing(t => t.ToString("HH:mm"));
+
+            CreateMap<Usuario, ListUsuarioDto>()
+                .ReverseMap();
+
+            CreateMap<CreateUsuarioDto, Usuario>();
+
+            CreateMap<Usuario, ShowUsuarioDto>()
+                .ForMember(dest => dest.UsuarioId, opt => opt.MapFrom(src => src.Id));
         }
 
         private TimeOnly ParseTimeString(string timeString)

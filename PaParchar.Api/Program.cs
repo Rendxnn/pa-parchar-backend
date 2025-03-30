@@ -17,7 +17,10 @@ builder.Services.AddTransient(typeof(_IBaseService<,>), typeof(_BaseService<,>))
 
 builder.Services
     .AddTransient<IParcheService, ParcheService>()
-    .AddTransient<IParcheRepository, ParcheRepository>();
+    .AddTransient<IParcheRepository, ParcheRepository>()
+    .AddTransient<IUsuarioRepository, UsuarioRepository>()
+    .AddTransient<IUsuarioService, UsuarioService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -34,9 +37,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-
     app.UseSwagger();
     app.UseSwaggerUI();
+
 
 
 app.UseHttpsRedirection();
