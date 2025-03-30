@@ -7,10 +7,6 @@ namespace PaParchar.Domain.Entities
     public class ParcheHorario
         : _BaseEntity<Guid>
     {
-        [Key]
-        [Column("horario_id")]
-        public Guid HorarioId { get; set; }
-
         [Required]
         [Column("parche_id")]
         public Guid ParcheId { get; set; }
@@ -21,14 +17,12 @@ namespace PaParchar.Domain.Entities
         public string Dia { get; set; } = null!;
 
         [Required]
-        [StringLength(5)]
         [Column("hora_inicio")]
-        public string HoraInicio { get; set; } = null!;
+        public TimeOnly HoraInicio { get; set; }
 
         [Required]
-        [StringLength(5)]
         [Column("hora_fin")]
-        public string HoraFin { get; set; } = null!;
+        public TimeOnly HoraFin { get; set; }
 
         [ForeignKey("ParcheId")]
         public virtual Parche Parche { get; set; } = null!;

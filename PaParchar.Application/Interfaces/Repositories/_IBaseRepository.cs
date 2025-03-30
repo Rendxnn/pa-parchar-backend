@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace PaParchar.Application.Interfaces.Repositories
 {
@@ -6,13 +7,14 @@ namespace PaParchar.Application.Interfaces.Repositories
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> GetByIdAsync(ID id);
+        Task<T?> GetByIdWithIncludeAsync(ID id, string includeProperties);
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(ID id);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<bool> ExistsAsync(ID id);
         Task SaveChangesAsync();
-
+        DbContext GetContext();
 
         Task<TDto?> GetProjectedByIdAsync<TDto>(ID id);
         Task<IEnumerable<TDto>> GetProjectedAsync<TDto>(Expression<Func<T, bool>>? predicate = null);

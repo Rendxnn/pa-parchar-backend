@@ -150,19 +150,58 @@ namespace PaParchar.Infrastructure.Services
             }
         }
 
-        public Task<IResult<IEnumerable<TDto>>> GetProjectedAsync<TDto>(Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<IResult<IEnumerable<TDto>>> GetProjectedAsync<TDto>(Expression<Func<T, bool>>? predicate = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IEnumerable<TDto> result = await _repository.GetProjectedAsync<TDto>(predicate);
+                
+                if (result == null || !result.Any())
+                    return await Result<IEnumerable<TDto>>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
+                
+                return await Result<IEnumerable<TDto>>.SuccessAsync(result);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return await Result<IEnumerable<TDto>>.FailureAsync("Error obteniendo los registros proyectados", ex.Message);
+            }
         }
 
-        public Task<IResult<(IEnumerable<TDto> Items, int TotalCount)>> GetProjectedPagedAsync<TDto>(int page, int pageSize, Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<IResult<(IEnumerable<TDto> Items, int TotalCount)>> GetProjectedPagedAsync<TDto>(int page, int pageSize, Expression<Func<T, bool>>? predicate = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await _repository.GetProjectedPagedAsync<TDto>(page, pageSize, predicate);
+                
+                if (result.Items == null || !result.Items.Any())
+                    return await Result<(IEnumerable<TDto> Items, int TotalCount)>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
+                
+                return await Result<(IEnumerable<TDto> Items, int TotalCount)>.SuccessAsync(result);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return await Result<(IEnumerable<TDto> Items, int TotalCount)>.FailureAsync("Error obteniendo los registros paginados", ex.Message);
+            }
         }
 
-        public Task<IResult<IEnumerable<TDto>>> GetProjectedOrderedAsync<TDto, TKey>(Expression<Func<T, TKey>> orderBy, bool ascending = true, Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<IResult<IEnumerable<TDto>>> GetProjectedOrderedAsync<TDto, TKey>(Expression<Func<T, TKey>> orderBy, bool ascending = true, Expression<Func<T, bool>>? predicate = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IEnumerable<TDto> result = await _repository.GetProjectedOrderedAsync<TDto, TKey>(orderBy, ascending, predicate);
+                
+                if (result == null || !result.Any())
+                    return await Result<IEnumerable<TDto>>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
+                
+                return await Result<IEnumerable<TDto>>.SuccessAsync(result);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return await Result<IEnumerable<TDto>>.FailureAsync("Error obteniendo los registros ordenados", ex.Message);
+            }
         }
     }
 }

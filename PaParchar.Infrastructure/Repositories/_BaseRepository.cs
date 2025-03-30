@@ -31,17 +31,34 @@ namespace PaParchar.Infrastructure.Repositories
             return await _dbSet.FindAsync(id);
         }
 
+        public virtual async Task<T?> GetByIdWithIncludeAsync(ID id, string includeProperties)
+        {
+            IQueryable<T> query = _dbSet;
+            
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+            
+            return await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+        }
+
+        public virtual DbContext GetContext()
+        {
+            return _context;
+        }
+
         public virtual async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
             return entity;
         }
 
-        public virtual async Task UpdateAsync(T entity)
+        public virtual Task UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public virtual async Task DeleteAsync(ID id)

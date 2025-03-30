@@ -24,10 +24,10 @@ namespace PaParchar.Infrastructure.Migrations
 
             modelBuilder.Entity("PaParchar.Domain.Entities.Parche", b =>
                 {
-                    b.Property<Guid>("ParcheId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("parche_id");
+                        .HasColumnName("id");
 
                     b.Property<int?>("Capacidad")
                         .HasColumnType("integer")
@@ -57,9 +57,6 @@ namespace PaParchar.Infrastructure.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_inicio");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
 
                     b.Property<decimal?>("Latitud")
                         .HasPrecision(18, 15)
@@ -96,17 +93,17 @@ namespace PaParchar.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("ultima_actualizacion");
 
-                    b.HasKey("ParcheId");
+                    b.HasKey("Id");
 
                     b.ToTable("parches");
                 });
 
             modelBuilder.Entity("PaParchar.Domain.Entities.ParcheHorario", b =>
                 {
-                    b.Property<Guid>("HorarioId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("horario_id");
+                        .HasColumnName("id");
 
                     b.Property<string>("Dia")
                         .IsRequired()
@@ -116,24 +113,19 @@ namespace PaParchar.Infrastructure.Migrations
 
                     b.Property<string>("HoraFin")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)")
+                        .HasColumnType("text")
                         .HasColumnName("hora_fin");
 
                     b.Property<string>("HoraInicio")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)")
+                        .HasColumnType("text")
                         .HasColumnName("hora_inicio");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ParcheId")
                         .HasColumnType("uuid")
                         .HasColumnName("parche_id");
 
-                    b.HasKey("HorarioId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ParcheId");
 

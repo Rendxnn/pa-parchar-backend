@@ -5,6 +5,7 @@
         public Guid ParcheId { get; set; }
         public string Nombre { get; set; } = null!;
         public string? PortadaUrl { get; set; }
+        public decimal? Precio { get; set; }
         public DateTime FechaParche { get; set; }
     }
 }

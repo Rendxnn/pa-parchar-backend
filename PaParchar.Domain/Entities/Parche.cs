@@ -8,10 +8,6 @@ namespace PaParchar.Domain.Entities
     public class Parche
         : _BaseEntity<Guid>
     {
-        [Key]
-        [Column("parche_id")]
-        public Guid ParcheId { get; set; }
-
         [Required]
         [StringLength(100)]
         [Column("nombre")]
@@ -60,12 +56,11 @@ namespace PaParchar.Domain.Entities
 
         [Required]
         [Column("fecha_creacion")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         [Column("ultima_actualizacion")]
         public DateTime? UltimaActualizacion { get; set; }
 
-        // Relación con horarios
         public virtual ICollection<ParcheHorario>? Horarios { get; set; }
     }
 

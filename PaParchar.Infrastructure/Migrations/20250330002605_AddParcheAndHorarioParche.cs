@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PaParchar.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddParcheAndHorario : Migration
+    public partial class AddParcheAndHorarioParche : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace PaParchar.Infrastructure.Migrations
                 name: "parches",
                 columns: table => new
                 {
-                    parche_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     descripcion = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     ubicacion = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
@@ -29,33 +29,31 @@ namespace PaParchar.Infrastructure.Migrations
                     fecha_inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     fecha_fin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     fecha_creacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ultima_actualizacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Id = table.Column<Guid>(type: "uuid", nullable: false)
+                    ultima_actualizacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_parches", x => x.parche_id);
+                    table.PrimaryKey("PK_parches", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "parches_horarios",
                 columns: table => new
                 {
-                    horario_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     parche_id = table.Column<Guid>(type: "uuid", nullable: false),
                     dia = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
-                    hora_inicio = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
-                    hora_fin = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
-                    Id = table.Column<Guid>(type: "uuid", nullable: false)
+                    hora_inicio = table.Column<string>(type: "text", nullable: false),
+                    hora_fin = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_parches_horarios", x => x.horario_id);
+                    table.PrimaryKey("PK_parches_horarios", x => x.id);
                     table.ForeignKey(
                         name: "FK_parches_horarios_parches_parche_id",
                         column: x => x.parche_id,
                         principalTable: "parches",
-                        principalColumn: "parche_id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 

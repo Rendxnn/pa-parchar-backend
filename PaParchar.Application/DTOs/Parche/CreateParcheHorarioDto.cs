@@ -2,18 +2,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PaParchar.Application.DTOs.Parche
 {
-    public class ParcheHorarioDto
+    public class CreateParcheHorarioDto
     {
         [Required]
         [StringLength(1)]
         public string Dia { get; set; } = null!;
 
         [Required]
-        [StringLength(5)]
-        public string HoraInicio { get; set; } = null!;
+        public TimeOnly HoraInicio { get; set; }
 
         [Required]
-        [StringLength(5)]
-        public string HoraFin { get; set; } = null!;
+        public TimeOnly HoraFin { get; set; }
     }
 } 

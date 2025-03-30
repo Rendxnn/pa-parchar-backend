@@ -23,6 +23,6 @@ namespace PaParchar.Application.DTOs.Parche
         [Required]
         public DateTime FechaFin { get; set; }
 
-        public ICollection<ParcheHorarioDto>? Horarios { get; set; }
+        public ICollection<CreateParcheHorarioDto>? Horarios { get; set; }
     }
 }
