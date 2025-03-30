@@ -19,6 +19,14 @@ namespace PaParchar.Api.Controllers
 
             return result.ToHttpResponse();
         }
+        
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ShowParcheDto>> GetParcheById(Guid id)
+        {
+            IResult<ShowParcheDto> result = await this.parcheService.GetParcheById(id);
+
+            return result.ToHttpResponse();
+        }
 
         [HttpPost]
         public async Task<ActionResult<ShowParcheDto>> CreateParche([FromBody] CreateParcheDto parcheDto)
@@ -26,6 +34,27 @@ namespace PaParchar.Api.Controllers
             IResult<ShowParcheDto> result = await this.parcheService.CreateParche(parcheDto);
 
             return result.ToHttpResponse();
+        }
+        
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ShowParcheDto>> UpdateParche(Guid id, [FromBody] UpdateParcheDto parcheDto)
+        {
+            IResult<ShowParcheDto> result = await this.parcheService.UpdateParche(id, parcheDto);
+
+            return result.ToHttpResponse();
+        }
+        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteParche(Guid id)
+        {
+            IResult<bool> result = await this.parcheService.DeleteParche(id);
+            
+            if (!result.Successful.GetValueOrDefault())
+            {
+                return StatusCode(result.Found == false ? 404 : 500, new { message = result.Message, exceptionMessage = result.ExceptionMessage });
+            }
+            
+            return NoContent();
         }
     }
 }
