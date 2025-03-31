@@ -1,15 +1,14 @@
-﻿
-namespace PaParchar.Utils.Results
+﻿namespace PaParchar.Utils.Results
 {
     public class Result<T> : IResult<T>
     {
         public T Data { get; set; } = default!;
-        public bool? Found { get; set; } = null;
-        public string? Message { get; set; } = null;
-        public string? ExceptionMessage { get; set; } = null;
-        public bool? Successful { get; set; } = null;
+        public bool? Found { get; set; } = true;
+        public bool? Successful { get; set; } = true;
+        public string? Message { get; set; }
+        public string? ExceptionMessage { get; set; }
 
-        public static IResult<T> Success()
+        public static Result<T> Success()
         {
             return new Result<T>
             {
@@ -17,7 +16,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Success(T data)
+        public static Result<T> Success(T data)
         {
             return new Result<T>
             {
@@ -26,7 +25,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Success(T data, string message)
+        public static Result<T> Success(T data, string message)
         {
             return new Result<T>
             {
@@ -36,7 +35,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Failure()
+        public static Result<T> Failure()
         {
             return new Result<T>
             {
@@ -45,7 +44,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Failure(T data)
+        public static Result<T> Failure(T data)
         {
             return new Result<T>
             {
@@ -55,7 +54,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Failure(IResult<T> result)
+        public static Result<T> Failure(IResult<T> result)
         {
             return new Result<T>
             {
@@ -67,7 +66,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Failure(string message)
+        public static Result<T> Failure(string message)
         {
             return new Result<T>
             {
@@ -77,7 +76,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> Failure(string message, string exceptionMessage)
+        public static Result<T> Failure(string message, string exceptionMessage)
         {
             return new Result<T>
             {
@@ -88,7 +87,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> NotFound()
+        public static Result<T> NotFound()
         {
             return new Result<T>
             {
@@ -97,7 +96,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> NotFound(T data)
+        public static Result<T> NotFound(T data)
         {
             return new Result<T>
             {
@@ -107,7 +106,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> NotFound(string message)
+        public static Result<T> NotFound(string message)
         {
             return new Result<T>
             {
@@ -117,7 +116,7 @@ namespace PaParchar.Utils.Results
             };
         }
 
-        public static IResult<T> NotFound(string message, string exceptionMessage)
+        public static Result<T> NotFound(string message, string exceptionMessage)
         {
             return new Result<T>
             {
@@ -128,65 +127,64 @@ namespace PaParchar.Utils.Results
             };
         }
 
-
-        public static async Task<IResult<T>> SuccessAsync()
+        public static Task<Result<T>> SuccessAsync()
         {
-            return await Task.FromResult(Success());
+            return Task.FromResult(Success());
         }
 
-        public static async Task<IResult<T>> SuccessAsync(T data)
+        public static Task<Result<T>> SuccessAsync(T data)
         {
-            return await Task.FromResult(Success(data));
+            return Task.FromResult(Success(data));
         }
 
-        public static async Task<IResult<T>> SuccessAsync(T data, string message)
+        public static Task<Result<T>> SuccessAsync(T data, string message)
         {
-            return await Task.FromResult(Success(data, message));
+            return Task.FromResult(Success(data, message));
         }
 
-        public static async Task<IResult<T>> FailureAsync()
+        public static Task<Result<T>> FailureAsync()
         {
-            return await Task.FromResult(Failure());
+            return Task.FromResult(Failure());
         }
 
-        public static async Task<IResult<T>> FailureAsync(T data)
+        public static Task<Result<T>> FailureAsync(T data)
         {
-            return await Task.FromResult(Failure(data));
+            return Task.FromResult(Failure(data));
         }
 
-        public static async Task<IResult<T>> FailureAsync(IResult<T> result)
+        public static Task<Result<T>> FailureAsync(IResult<T> result)
         {
-            return await Task.FromResult(Failure(result));
+            return Task.FromResult(Failure(result));
         }
 
-        public static async Task<IResult<T>> FailureAsync(string message)
+        public static Task<Result<T>> FailureAsync(string message)
         {
-            return await Task.FromResult(Failure(message));
-        } 
-
-        public static async Task<IResult<T>> FailureAsync(string message, string exceptionMessage)
-        {
-            return await Task.FromResult(Failure(message, exceptionMessage));
+            return Task.FromResult(Failure(message));
         }
 
-        public static async Task<IResult<T>> NotFoundAsync()
+        public static Task<Result<T>> FailureAsync(string message, string exceptionMessage)
         {
-            return await Task.FromResult(NotFound());
+            return Task.FromResult(Failure(message, exceptionMessage));
         }
 
-        public static async Task<IResult<T>> NotFoundAsync(T data)
+        public static Task<Result<T>> NotFoundAsync()
         {
-            return await Task.FromResult(NotFound(data));
+            return Task.FromResult(NotFound());
         }
 
-        public static async Task<IResult<T>> NotFoundAsync(string message)
+        public static Task<Result<T>> NotFoundAsync(T data)
         {
-            return await Task.FromResult(NotFound(message));
+            return Task.FromResult(NotFound(data));
         }
 
-        public static async Task<IResult<T>> NotFoundAsync(string message, string exceptionMessage)
+        public static Task<Result<T>> NotFoundAsync(string message)
         {
-            return await Task.FromResult(NotFound(message, exceptionMessage));
+            return Task.FromResult(NotFound(message));
+        }
+
+        public static Task<Result<T>> NotFoundAsync(string message, string exceptionMessage)
+        {
+            return Task.FromResult(NotFound(message, exceptionMessage));
         }
     }
 }
