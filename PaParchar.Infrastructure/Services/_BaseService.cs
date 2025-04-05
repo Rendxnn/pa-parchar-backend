@@ -1,4 +1,5 @@
-﻿using PaParchar.Application.Interfaces.Repositories;
+﻿using AutoMapper;
+using PaParchar.Application.Interfaces.Repositories;
 using PaParchar.Application.Interfaces.Services;
 using PaParchar.Domain.Entities;
 using PaParchar.Utils.Results;
@@ -11,10 +12,12 @@ namespace PaParchar.Infrastructure.Services
         where ID : notnull
     {
         protected readonly _IBaseRepository<T, ID> _repository;
+        protected readonly IMapper _mapper;
 
-        public _BaseService(_IBaseRepository<T, ID> repository)
+        public _BaseService(_IBaseRepository<T, ID> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public virtual async Task<IResult<IEnumerable<T>>> GetAllAsync()
@@ -85,22 +88,22 @@ namespace PaParchar.Infrastructure.Services
             }
         }
 
-        public virtual async Task<IResult<T>> DeleteAsync(ID id)
+        public virtual async Task<IResult<object>> DeleteAsync(ID id)
         {
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
                 if (entity == null)
-                    return Result<T>.NotFound($"No se encontró el registro con Id: {id}");
+                    return Result<object>.NotFound($"No se encontró el registro con Id: {id}");
 
                 await _repository.DeleteAsync(id);
                 await _repository.SaveChangesAsync();
 
-                return Result<T>.Success(entity, "Registro eliminado exitosamente.");
+                return Result<object>.Success();
             }
             catch (Exception ex)
             {
-                return Result<T>.Failure($"Error al eliminar el registro con Id: {id}", ex.Message);
+                return Result<object>.Failure($"Error al eliminar el registro con Id: {id}", ex.Message);
             }
         }
 
@@ -135,18 +138,20 @@ namespace PaParchar.Infrastructure.Services
             }
         }
 
-        public virtual async Task<IResult<TDto?>> GetProjectedByIdAsync<TDto>(ID id)
+        public virtual async Task<IResult<TDto>> GetProjectedByIdAsync<TDto>(ID id)
         {
             try
             {
-                TDto? result = await this._repository.GetProjectedByIdAsync<TDto?>(id);
+                TDto? result = await this._repository.GetProjectedByIdAsync<TDto>(id);
 
-                return Result<TDto?>.Success(result);
+                if (result == null) return Result<TDto>.NotFound($"No se ha encontrado el registro con id: {id}");
+
+                return Result<TDto>.Success(result);
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
-                return await Result<TDto?>.FailureAsync($"Error obteniendo el registro con id: {id}");
+                return Result<TDto>.Failure($"Error obteniendo el registro con id: {id}");
             }
         }
 
@@ -157,14 +162,14 @@ namespace PaParchar.Infrastructure.Services
                 IEnumerable<TDto> result = await _repository.GetProjectedAsync<TDto>(predicate);
                 
                 if (result == null || !result.Any())
-                    return await Result<IEnumerable<TDto>>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
+                    return Result<IEnumerable<TDto>>.NotFound("No se encontraron registros con los criterios especificados.");
                 
-                return await Result<IEnumerable<TDto>>.SuccessAsync(result);
+                return Result<IEnumerable<TDto>>.Success(result);
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
-                return await Result<IEnumerable<TDto>>.FailureAsync("Error obteniendo los registros proyectados", ex.Message);
+                return Result<IEnumerable<TDto>>.Failure("Error obteniendo los registros proyectados", ex.Message);
             }
         }
 
@@ -175,14 +180,14 @@ namespace PaParchar.Infrastructure.Services
                 var result = await _repository.GetProjectedPagedAsync<TDto>(page, pageSize, predicate);
                 
                 if (result.Items == null || !result.Items.Any())
-                    return await Result<(IEnumerable<TDto> Items, int TotalCount)>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
-                
-                return await Result<(IEnumerable<TDto> Items, int TotalCount)>.SuccessAsync(result);
+                    return Result<(IEnumerable<TDto> Items, int TotalCount)>.Failure("No se encontraron registros con los criterios especificados.");
+
+                return Result<(IEnumerable<TDto> Items, int TotalCount)>.Failure(result);
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
-                return await Result<(IEnumerable<TDto> Items, int TotalCount)>.FailureAsync("Error obteniendo los registros paginados", ex.Message);
+                return Result<(IEnumerable<TDto> Items, int TotalCount)>.Failure("Error obteniendo los registros paginados", ex.Message);
             }
         }
 
@@ -193,14 +198,57 @@ namespace PaParchar.Infrastructure.Services
                 IEnumerable<TDto> result = await _repository.GetProjectedOrderedAsync<TDto, TKey>(orderBy, ascending, predicate);
                 
                 if (result == null || !result.Any())
-                    return await Result<IEnumerable<TDto>>.NotFoundAsync("No se encontraron registros con los criterios especificados.");
+                    return Result<IEnumerable<TDto>>.NotFound("No se encontraron registros con los criterios especificados.");
                 
-                return await Result<IEnumerable<TDto>>.SuccessAsync(result);
+                return Result<IEnumerable<TDto>>.Success(result);
             }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
-                return await Result<IEnumerable<TDto>>.FailureAsync("Error obteniendo los registros ordenados", ex.Message);
+                return Result<IEnumerable<TDto>>.Failure("Error obteniendo los registros ordenados", ex.Message);
+            }
+        }
+
+        public virtual async Task<IResult<TShowDto>> CreateFromDto<TShowDto, TCreateDto>(TCreateDto createDto)
+        {
+            try
+            {
+                T entity = _mapper.Map<T>(createDto);
+
+                T createdEntity = await _repository.AddAsync(entity);
+                await _repository.SaveChangesAsync();
+
+                TShowDto responseDto = _mapper.Map<TShowDto>(createdEntity);
+                return Result<TShowDto>.Success(responseDto);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return Result<TShowDto>.Failure("Error creando registro");
+            }
+        }
+
+        public virtual async Task<IResult<TShowDto>> UpdateFromDto<TShowDto, TUpdateDto>(ID entityId, TUpdateDto updateDto)
+        {
+            try
+            {
+                IResult<T> entityResult = await GetByIdAsync(entityId);
+                if (!entityResult.Successful.GetValueOrDefault()) return Result<TShowDto>.Failure("Error actualizando registro");
+                T entity = entityResult.Data;
+
+                _mapper.Map(updateDto, entity);
+
+                await _repository.UpdateAsync(entity);
+
+                await _repository.SaveChangesAsync();
+
+                TShowDto responseDto = _mapper.Map<TShowDto>(entity);
+                return Result<TShowDto>.Success(responseDto);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                return Result<TShowDto>.Failure("Error creando registro");
             }
         }
     }
