@@ -24,4 +24,10 @@
     <ProjectReference Include="..\PaParchar.Infrastructure\PaParchar.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Config\Keys\gcp_credentials.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
