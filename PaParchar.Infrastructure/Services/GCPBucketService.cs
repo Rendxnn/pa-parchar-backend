@@ -6,15 +6,11 @@ using Microsoft.Extensions.Options;
 using PaParchar.Application.Interfaces.Services;
 using PaParchar.Infrastructure.Options;
 using PaParchar.Utils.Results;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace PaParchar.Infrastructure.Services
 {
     public class GCPBucketService : IFileStorageService
     {
-        private readonly string _projectId;
         private readonly string _bucketName;
         private readonly string _credentialPath;
         private readonly StorageClient _storageClient;
@@ -24,33 +20,35 @@ namespace PaParchar.Infrastructure.Services
             IConfiguration configuration, 
             IOptions<FileStorageOptions> fileOptions)
         {
-            _projectId = configuration["GCPStorage:ProjectId"];
-            _bucketName = configuration["GCPStorage:BucketName"];
-            _credentialPath = configuration["GCPStorage:CredentialPath"];
+            _bucketName = configuration["GoogleCloudStorage:BucketName"] ?? throw new Exception("Error obteniendo el nombre del bucket");
+            _credentialPath = configuration["GoogleCloudStorage:CredentialsFilePath"] ?? throw new Exception("Error obteniendo la ruta del archivo de credenciales");
             _fileOptions = fileOptions.Value;
 
-            // Validar la configuración
-            if (string.IsNullOrEmpty(_projectId) || string.IsNullOrEmpty(_bucketName))
+            if (string.IsNullOrEmpty(_bucketName))
             {
-                throw new ArgumentException("La configuración de GCP Storage es inválida. Verifica tus archivos appsettings.json.");
+                throw new ArgumentException("La configuración de GoogleCloudStorage es inválida. Verifica el BucketName en tu archivo appsettings.json.");
             }
 
-            // Inicializar el cliente de Storage con las credenciales
-            if (!string.IsNullOrEmpty(_credentialPath) && File.Exists(_credentialPath))
+            if (!string.IsNullOrEmpty(_credentialPath))
             {
-                GoogleCredential credential = GoogleCredential.FromFile(_credentialPath);
+                string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _credentialPath);
+                
+                if (!File.Exists(fullPath))
+                {
+                    throw new FileNotFoundException($"No se encontró el archivo de credenciales en: {fullPath}");
+                }
+                
+                GoogleCredential credential = GoogleCredential.FromFile(fullPath);
                 _storageClient = StorageClient.Create(credential);
             }
             else
             {
-                // En entornos de desarrollo o donde ya estén configuradas las credenciales por defecto
                 _storageClient = StorageClient.Create();
             }
         }
 
         public IResult<string> UploadFile(IFormFile formFile)
         {
-            // Implementar una versión sincrónica que llama a la versión asincrónica
             return UploadFileAsync(formFile).GetAwaiter().GetResult();
         }
 
@@ -114,10 +112,7 @@ namespace PaParchar.Infrastructure.Services
 
                 using (var stream = formFile.OpenReadStream())
                 {
-                    var uploadOptions = new UploadObjectOptions
-                    {
-                        PredefinedAcl = PredefinedObjectAcl.PublicRead
-                    };
+                    var uploadOptions = new UploadObjectOptions();
 
                     var uploadedObject = await _storageClient.UploadObjectAsync(
                         bucket: _bucketName,
@@ -127,7 +122,6 @@ namespace PaParchar.Infrastructure.Services
                         options: uploadOptions);
                 }
 
-                // Construir la URL pública del archivo
                 string fileUrl = $"https://storage.googleapis.com/{_bucketName}/{objectName}";
 
                 return new Result<string>

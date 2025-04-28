@@ -17,6 +17,8 @@ namespace PaParchar.Application.DTOs.Parche
 
         public decimal? Precio { get; set; }
 
+        public string? PortadaUrl { get; set; }
+
         [Required]
         public DateTime FechaInicio { get; set; }
 

@@ -2,7 +2,7 @@
 {
     public class Result<T> : IResult<T>
     {
-        public T Data { get; set; } = default!;
+        public T? Data { get; set; }
         public bool? Found { get; set; } = true;
         public bool? Successful { get; set; } = true;
         public string? Message { get; set; }

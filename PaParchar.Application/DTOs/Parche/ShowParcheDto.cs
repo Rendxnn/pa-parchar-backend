@@ -20,5 +20,6 @@ namespace PaParchar.Application.DTOs.Parche
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public DateTime? UltimaActualizacion { get; set; }
         public ICollection<CreateParcheHorarioDto>? Horarios { get; set; }
+        public ICollection<ParcheImagenDto>? Imagenes { get; set; }
     }
 }

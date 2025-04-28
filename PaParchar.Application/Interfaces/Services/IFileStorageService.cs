@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PaParchar.Utils.Results;
-using System.Threading.Tasks;
 
 namespace PaParchar.Application.Interfaces.Services
 {

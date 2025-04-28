@@ -62,6 +62,8 @@ namespace PaParchar.Domain.Entities
         public DateTime? UltimaActualizacion { get; set; }
 
         public virtual ICollection<ParcheHorario>? Horarios { get; set; }
+        
+        public virtual ICollection<ParcheImagen>? Imagenes { get; set; }
     }
 
     public enum EstadoParche

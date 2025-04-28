@@ -15,10 +15,10 @@ namespace PaParchar.Infrastructure.Configuration.Contexts
 
         public DbSet<Parche> Parches { get; set; }
         public DbSet<ParcheHorario> ParchesHorarios { get; set; }
+        public DbSet<ParcheImagen> ParcheImagenes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configura para que todas las propiedades DateTime se almacenen como UTC
             var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
                 v => v.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(v, DateTimeKind.Utc) : v.ToUniversalTime(),
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
@@ -27,12 +27,10 @@ namespace PaParchar.Infrastructure.Configuration.Contexts
                 v => v.HasValue ? (v.Value.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v.Value.ToUniversalTime()) : null,
                 v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
 
-            // Conversor de TimeOnly a string (formato HH:mm)
             var timeOnlyConverter = new ValueConverter<TimeOnly, string>(
                 v => v.ToString("HH:mm"),
                 v => ParseTimeOnly(v));
 
-            // Aplica los conversores a todas las propiedades 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
@@ -53,7 +51,6 @@ namespace PaParchar.Infrastructure.Configuration.Contexts
             }
         }
 
-        // Método auxiliar para parsear TimeOnly
         private static TimeOnly ParseTimeOnly(string timeString)
         {
             int hours = int.Parse(timeString.Substring(0, 2));
