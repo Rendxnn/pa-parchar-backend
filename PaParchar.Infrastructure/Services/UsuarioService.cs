@@ -18,7 +18,7 @@ namespace PaParchar.Infrastructure.Services
     {
         protected readonly IMapper mapper;
 
-        public UsuarioService(_IBaseRepository<Usuario, Guid> repository, IMapper mapper) : base(repository)
+        public UsuarioService(_IBaseRepository<Usuario, Guid> repository, IMapper mapper) : base(repository, mapper)
         {
             this.mapper = mapper;
         }
@@ -35,13 +35,13 @@ namespace PaParchar.Infrastructure.Services
 
                 ShowUsuarioDto result = mapper.Map<ShowUsuarioDto>(created);
 
-                return await Result<ShowUsuarioDto>.SuccessAsync(result);
+                return Result<ShowUsuarioDto>.Success(result);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
 
-                return await Result<ShowUsuarioDto>.FailureAsync("Error creando el parche", ex.Message);
+                return Result<ShowUsuarioDto>.Failure("Error creando el parche", ex.Message);
             }
 
 
