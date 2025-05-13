@@ -6,7 +6,6 @@ namespace PaParchar.Application.Interfaces.Services
 {
     public interface IUsuarioService : _IBaseService<Usuario, Guid>
     {
-        Task<IResult<IEnumerable<ListUsuarioDto>>> GetAllProjected();
         Task<IResult<ShowUsuarioDto>> CreateUsuario(CreateUsuarioDto usuario);
     }
 }

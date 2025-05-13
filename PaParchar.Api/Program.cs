@@ -35,7 +35,10 @@ builder.Services.Configure<FileStorageOptions>(
 
 builder.Services
     .AddTransient<IParcheService, ParcheService>()
-    .AddTransient<IParcheRepository, ParcheRepository>();
+    .AddTransient<IParcheRepository, ParcheRepository>()
+    .AddTransient<IUsuarioRepository, UsuarioRepository>()
+    .AddTransient<IUsuarioService, UsuarioService>();
+
 
 builder.Services.AddSingleton<IFileStorageService, GCPBucketService>();
 
@@ -56,9 +59,9 @@ var app = builder.Build();
 app.UseCors("AllowExpoClient");
 app.Urls.Add("http://*:5071");
 
-
     app.UseSwagger();
     app.UseSwaggerUI();
+
 
 
 app.UseHttpsRedirection();
