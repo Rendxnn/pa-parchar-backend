@@ -11,6 +11,20 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowExpoClient", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:8081",        // Expo development server
+                "http://localhost:19006",       // Expo web
+                "exp://localhost:8081")         // Expo Go
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddTransient(typeof(_IBaseRepository<,>), typeof(_BaseRepository<,>));
@@ -39,6 +53,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 
 var app = builder.Build();
+app.UseCors("AllowExpoClient");
+app.Urls.Add("http://*:5071");
 
 
     app.UseSwagger();
