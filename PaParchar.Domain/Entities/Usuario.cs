@@ -5,12 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaParchar.Domain.Entities
 {
+   [Table("usuarios")]
     public class Usuario
         : _BaseEntity<Guid>
     {
-        [Key]
-        [Column("user_id")]
-        public Guid UserId { get; set; }
 
         [Required]
         [StringLength(100)]

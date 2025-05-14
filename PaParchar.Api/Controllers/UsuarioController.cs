@@ -15,7 +15,7 @@ namespace PaParchar.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ListUsuarioDto>>> ListUsuario()
         {
-            IResult<IEnumerable<ListUsuarioDto>> result = await this.usuarioService.GetAllProjected();
+            IResult<IEnumerable<ListUsuarioDto>> result = await this.usuarioService.GetProjectedOrderedAsync<ListUsuarioDto, string>(usuario => usuario.Nombre);
 
             return result.ToHttpResponse();
         }
