@@ -6,8 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaParchar.Domain.Entities
 {
    [Table("usuarios")]
-    public class Usuario
-        : _BaseEntity<Guid>
+    public class Usuario: _BaseEntity<Guid>
     {
 
         [Required]
