@@ -92,7 +92,7 @@ namespace PaParchar.Infrastructure.Services
         {
             try
             {
-                var entity = await _repository.GetByIdAsync(id);
+                T? entity = await _repository.GetByIdAsync(id);
                 if (entity == null)
                     return Result<object>.NotFound($"No se encontró el registro con Id: {id}");
 
@@ -177,7 +177,7 @@ namespace PaParchar.Infrastructure.Services
         {
             try
             {
-                var result = await _repository.GetProjectedPagedAsync<TDto>(page, pageSize, predicate);
+                (IEnumerable<TDto> Items, int TotalCount) result = await _repository.GetProjectedPagedAsync<TDto>(page, pageSize, predicate);
                 
                 if (result.Items == null || !result.Items.Any())
                     return Result<(IEnumerable<TDto> Items, int TotalCount)>.Failure("No se encontraron registros con los criterios especificados.");
@@ -233,7 +233,7 @@ namespace PaParchar.Infrastructure.Services
             try
             {
                 IResult<T> entityResult = await GetByIdAsync(entityId);
-                if (!entityResult.Successful.GetValueOrDefault()) return Result<TShowDto>.Failure("Error actualizando registro");
+                if (!entityResult.Successful.GetValueOrDefault() || entityResult.Data == null) return Result<TShowDto>.Failure("Error actualizando registro");
                 T entity = entityResult.Data;
 
                 _mapper.Map(updateDto, entity);

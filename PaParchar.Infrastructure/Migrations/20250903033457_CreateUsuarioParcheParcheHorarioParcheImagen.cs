@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PaParchar.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddParcheAndHorarioParche : Migration
+    public partial class CreateUsuarioParcheParcheHorarioParcheImagen : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,44 @@ namespace PaParchar.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "usuarios",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    apellido = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    email = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    telefono = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    fecha_nacimiento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_usuarios", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "parche_imagenes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    parche_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    imagen_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    descripcion = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    orden = table.Column<int>(type: "integer", nullable: false),
+                    fecha_creacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_parche_imagenes", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_parche_imagenes_parches_parche_id",
+                        column: x => x.parche_id,
+                        principalTable: "parches",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "parches_horarios",
                 columns: table => new
                 {
@@ -58,6 +96,11 @@ namespace PaParchar.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_parche_imagenes_parche_id",
+                table: "parche_imagenes",
+                column: "parche_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_parches_horarios_parche_id",
                 table: "parches_horarios",
                 column: "parche_id");
@@ -67,7 +110,13 @@ namespace PaParchar.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "parche_imagenes");
+
+            migrationBuilder.DropTable(
                 name: "parches_horarios");
+
+            migrationBuilder.DropTable(
+                name: "usuarios");
 
             migrationBuilder.DropTable(
                 name: "parches");

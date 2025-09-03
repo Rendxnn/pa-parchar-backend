@@ -16,10 +16,9 @@ namespace PaParchar.Application.Interfaces.Services
         // PROJECTION QUERIES
         Task<IResult<TDto>> GetProjectedByIdAsync<TDto>(ID id);
         Task<IResult<IEnumerable<TDto>>> GetProjectedAsync<TDto>(Expression<Func<T, bool>>? predicate = null);
-        Task<IResult<(IEnumerable<TDto> Items, int TotalCount)>> GetProjectedPagedAsync<TDto>(int page, int pageSize, 
-        Expression<Func<T, bool>>? predicate = null);
-        Task<IResult<IEnumerable<TDto>>> GetProjectedOrderedAsync<TDto, TKey>(Expression<Func<T, TKey>> orderBy, 
-        bool ascending = true, 
+        Task<IResult<(IEnumerable<TDto> Items, int TotalCount)>> GetProjectedPagedAsync<TDto>(int page, int pageSize, Expression<Func<T, bool>>? predicate = null);
+        Task<IResult<IEnumerable<TDto>>> GetProjectedOrderedAsync<TDto, TKey>(Expression<Func<T, TKey>> orderBy,
+        bool ascending = true,
         Expression<Func<T, bool>>? predicate = null);
 
         // PROJECTION COMMANDS

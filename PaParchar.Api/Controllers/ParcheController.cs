@@ -133,9 +133,10 @@ namespace PaParchar.Api.Controllers
                     if (imagen.Length > 0)
                     {
                         IResult<string> imagenResult = await _fileStorageService.UploadFileAsync(imagen);
-                        if (imagenResult.Successful == true)
+
+                        if (imagenResult.Successful == true && imagenResult.Data != null)
                         {
-                            parcheImagenes.Add(new ParcheImagen 
+                            parcheImagenes.Add(new ParcheImagen
                             {
                                 ParcheId = id,
                                 ImagenUrl = imagenResult.Data,
@@ -178,38 +179,6 @@ namespace PaParchar.Api.Controllers
         {
             IResult<object> result = await this._parcheService.DeleteAsync(id);
             return result.ToHttpResponse();
-        }
-        
-        [HttpDelete("{parcheId}/imagen/{imagenId}")]
-        public async Task<ActionResult<ShowParcheDto>> DeleteImagen(Guid parcheId, Guid imagenId)
-        {
-            try
-            {
-                var parcheResult = await _parcheService.GetByIdAsync(parcheId);
-                if (parcheResult.Successful != true || parcheResult.Data == null)
-                {
-                    return NotFound($"No se encontró el parche con Id: {parcheId}");
-                }
-                
-                // Obtener el contexto a través del repositorio
-                var dbContext = ((dynamic)_parcheService).GetRepository().GetContext();
-                var imagen = await dbContext.Set<ParcheImagen>().FindAsync(imagenId);
-                
-                if (imagen == null || imagen.ParcheId != parcheId)
-                {
-                    return NotFound($"No se encontró la imagen con Id: {imagenId} para el parche: {parcheId}");
-                }
-                
-                dbContext.Set<ParcheImagen>().Remove(imagen);
-                await dbContext.SaveChangesAsync();
-                
-                IResult<ShowParcheDto> result = await _parcheService.GetProjectedByIdAsync<ShowParcheDto>(parcheId);
-                return result.ToHttpResponse();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno: {ex.Message}");
-            }
         }
     }
 }

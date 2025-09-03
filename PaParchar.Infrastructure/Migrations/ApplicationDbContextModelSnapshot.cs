@@ -132,6 +132,43 @@ namespace PaParchar.Infrastructure.Migrations
                     b.ToTable("parches_horarios");
                 });
 
+            modelBuilder.Entity("PaParchar.Domain.Entities.ParcheImagen", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("ImagenUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("imagen_url");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("integer")
+                        .HasColumnName("orden");
+
+                    b.Property<Guid>("ParcheId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parche_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParcheId");
+
+                    b.ToTable("parche_imagenes");
+                });
+
             modelBuilder.Entity("PaParchar.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
@@ -183,9 +220,22 @@ namespace PaParchar.Infrastructure.Migrations
                     b.Navigation("Parche");
                 });
 
+            modelBuilder.Entity("PaParchar.Domain.Entities.ParcheImagen", b =>
+                {
+                    b.HasOne("PaParchar.Domain.Entities.Parche", "Parche")
+                        .WithMany("Imagenes")
+                        .HasForeignKey("ParcheId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parche");
+                });
+
             modelBuilder.Entity("PaParchar.Domain.Entities.Parche", b =>
                 {
                     b.Navigation("Horarios");
+
+                    b.Navigation("Imagenes");
                 });
 #pragma warning restore 612, 618
         }
