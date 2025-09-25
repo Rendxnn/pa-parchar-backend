@@ -198,7 +198,7 @@ namespace PaParchar.Infrastructure.Services
                 IEnumerable<TDto> result = await _repository.GetProjectedOrderedAsync<TDto, TKey>(orderBy, ascending, predicate);
                 
                 if (result == null)
-                    return Result<IEnumerable<TDto>>.NotFound("No se encontraron registros con los criterios especificados.");
+                    return Result<IEnumerable<TDto>>.NotFound("No se eontraron registros con los criterios especificados.");
                 
                 return Result<IEnumerable<TDto>>.Success(result);
             }

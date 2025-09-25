@@ -8,6 +8,7 @@ using PaParchar.Infrastructure.Repositories;
 using PaParchar.Infrastructure.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PaParchar.Application.UseCases.Parche;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +40,16 @@ builder.Services
     .AddTransient<IUsuarioRepository, UsuarioRepository>()
     .AddTransient<IUsuarioService, UsuarioService>();
 
+builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 
-builder.Services.AddSingleton<IFileStorageService, GCPBucketService>();
+builder.Services
+    .AddTransient<ListParchesHandler>()
+    .AddTransient<GetParcheByIdHandler>()
+    .AddTransient<CreateParcheHandler>()
+    .AddTransient<UpdateParcheHandler>()
+    .AddTransient<DeleteParcheHandler>()
+    .AddTransient<SubirPortadaHandler>()
+    .AddTransient<SubirImagenesHandler>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
