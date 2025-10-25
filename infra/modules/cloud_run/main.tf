@@ -1,6 +1,7 @@
 resource "google_cloud_run_v2_service" "service" {
   name     = var.service_name
   location = var.location
+  deletion_protection = false
 
   template {
     service_account = var.service_account_email
@@ -60,4 +61,3 @@ resource "google_cloud_run_v2_service_iam_member" "invoker" {
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
-
