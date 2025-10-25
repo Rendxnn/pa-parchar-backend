@@ -11,6 +11,10 @@ namespace PaParchar.Application.DTOs.Parche
 
         public string? Ubicacion { get; set; }
 
+    public decimal? Latitud { get; set; }
+
+    public decimal? Longitud { get; set; }
+
         public int? Capacidad { get; set; }
 
         public bool EsPrivado { get; set; } = false;
