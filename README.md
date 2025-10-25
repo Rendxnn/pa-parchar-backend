@@ -159,3 +159,44 @@ Makefile mapea estos scripts a targets con parámetros (`PROJECT_ID`, `REGION`, 
 - Puedes adaptar región/tiers si cambias los valores en `infra/variables.tf` o pasas `-var`.
 - Si prefieres no exponer públicamente, cambia `allow_unauthenticated=false` y maneja IAM/IAP.
 
+## CI/CD con GitHub Actions (Cloud Run + Artifact Registry)
+
+El repositorio incluye un workflow listo para desplegar automáticamente la API a Cloud Run en cada push a `dev` o `main`:
+
+- Archivo: `.github/workflows/deploy-cloudrun.yml`.
+- Flujo:
+  1) Autenticación a GCP (Workload Identity Federation recomendado; fallback con JSON key).
+  2) Login a Artifact Registry y build de la imagen Docker (`PaParchar.Api/Dockerfile`).
+  3) Push de la imagen a Artifact Registry: `${REGION}-docker.pkg.dev/${PROJECT_ID}/${GAR_REPOSITORY}/paparchar-api:${GITHUB_SHA}`.
+  4) `gcloud run deploy` del servicio existente (conserva envs/secretos configurados por Terraform).
+  5) (Opcional) Ejecuta el Job de migraciones (`db-migrate-job`) si existe.
+
+Variables/Secrets requeridos en GitHub (Repository Settings → Secrets and variables → Actions):
+
+- `GCP_PROJECT_ID`: ID del proyecto GCP (ej: `my-project`).
+- `GCP_REGION`: región (ej: `us-central1`).
+- `GAR_REPOSITORY`: nombre del repositorio de Artifact Registry (default Terraform: `paparchar-backend`).
+- `CLOUD_RUN_SERVICE`: nombre del servicio en Cloud Run (default Terraform: `paparchar-api`).
+
+Autenticación (elige UNA de estas opciones):
+
+1) Workload Identity Federation (recomendado)
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`: recurso del WIF (ej: `projects/123/locations/global/workloadIdentityPools/gh-pool/providers/gh-provider`).
+- `GCP_SERVICE_ACCOUNT`: cuenta de servicio con permisos (ej: `paparchar-deployer@my-project.iam.gserviceaccount.com`).
+
+2) Service Account Key (fallback)
+- `GCP_SA_KEY`: JSON de la cuenta de servicio con permisos equivalentes.
+
+Permisos mínimos de la cuenta de servicio (puedes ajustar a tu política):
+- `roles/artifactregistry.writer` (push de imágenes).
+- `roles/run.admin` + `roles/iam.serviceAccountUser` (deploy a Cloud Run).
+- `roles/run.developer` (listar jobs opcionalmente).
+- `roles/storage.admin` solo si el flujo de build lo necesita (no habitual).
+
+Suposiciones del workflow:
+- La infraestructura base (repositorio de Artifact Registry, servicio Cloud Run, secretos, Cloud SQL, bucket, cuentas y roles) ya fue creada con Terraform (`make provision` + `make deploy`).
+- El `gcloud run deploy` actualiza la imagen manteniendo configuración/secretos existentes.
+- Si existe `db-migrate-job`, se intenta ejecutar tras el deploy (no falla si no existe).
+
+Para personalizar ramas o nombres de imagen, edita `.github/workflows/deploy-cloudrun.yml`.
+

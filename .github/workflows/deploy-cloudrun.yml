@@ -1,0 +1,82 @@
+name: Deploy Backend to Cloud Run
+
+on:
+  push:
+    branches: ["dev", "main"]
+    paths:
+      - 'PaParchar.Api/**'
+      - 'PaParchar.Application/**'
+      - 'PaParchar.Domain/**'
+      - 'PaParchar.Infrastructure/**'
+      - 'Dockerfile*'
+      - '.github/workflows/deploy-cloudrun.yml'
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: ${{ secrets.GCP_REGION }}
+  GAR_REPOSITORY: ${{ secrets.GAR_REPOSITORY }}
+  SERVICE: ${{ secrets.CLOUD_RUN_SERVICE }}
+  IMAGE: ${{ format('{0}-docker.pkg.dev/{1}/{2}/paparchar-api:{3}', env.REGION, env.PROJECT_ID, env.GAR_REPOSITORY, github.sha) }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Prefer Workload Identity Federation. If not configured, fallback to JSON key.
+      - name: Auth with Workload Identity Federation
+        if: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.GCP_SERVICE_ACCOUNT != '' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+
+      - name: Auth with Service Account Key (fallback)
+        if: ${{ (secrets.GCP_WORKLOAD_IDENTITY_PROVIDER == '' || secrets.GCP_SERVICE_ACCOUNT == '') && secrets.GCP_SA_KEY != '' }}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          install_components: 'beta'
+          export_default_credentials: true
+
+      - name: Configure Docker auth for Artifact Registry
+        run: |
+          gcloud auth configure-docker $REGION-docker.pkg.dev -q
+
+      - name: Show versions
+        run: |
+          gcloud --version
+          docker --version
+
+      - name: Build container image
+        run: |
+          docker build -f PaParchar.Api/Dockerfile -t "$IMAGE" .
+
+      - name: Push image to Artifact Registry
+        run: |
+          docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "$SERVICE" --image "$IMAGE" --region "$REGION" --platform managed --quiet
+
+      - name: Run DB migrate job if exists (optional)
+        continue-on-error: true
+        run: |
+          if gcloud run jobs describe db-migrate-job --region "$REGION" >/dev/null 2>&1; then
+            gcloud run jobs execute db-migrate-job --region "$REGION" --wait
+          else
+            echo "db-migrate-job not found, skipping"
+          fi
