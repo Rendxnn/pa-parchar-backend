@@ -12,7 +12,10 @@ namespace PaParchar.Infrastructure.Mapping
         {
             CreateMap<Parche, ListParcheDto>()
                 .ForMember(dest => dest.FechaParche, opt => opt.MapFrom(src => src.FechaInicio))
-                .ForMember(dest => dest.ParcheId, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.ParcheId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Ubicacion, opt => opt.MapFrom(src => src.Ubicacion))
+                .ForMember(dest => dest.Latitud, opt => opt.MapFrom(src => src.Latitud))
+                .ForMember(dest => dest.Longitud, opt => opt.MapFrom(src => src.Longitud));
 
             CreateMap<Parche, ShowParcheDto>()
                 .ForMember(dest => dest.ParcheId, opt => opt.MapFrom(src => src.Id));
