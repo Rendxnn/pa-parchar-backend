@@ -1,0 +1,31 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy solution and restore
+COPY PaParchar.sln ./
+COPY PaParchar.Api/PaParchar.Api.csproj PaParchar.Api/
+COPY PaParchar.Infrastructure/PaParchar.Infrastructure.csproj PaParchar.Infrastructure/
+COPY PaParchar.Application/PaParchar.Application.csproj PaParchar.Application/
+COPY PaParchar.Domain/PaParchar.Domain.csproj PaParchar.Domain/
+COPY PaParchar.Utils/PaParchar.Utils.csproj PaParchar.Utils/
+RUN dotnet restore PaParchar.Api/PaParchar.Api.csproj
+
+# Copy the rest of the source
+COPY . .
+
+# Install EF CLI and build
+RUN dotnet tool install -g dotnet-ef \
+    && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> /root/.bashrc \
+    && /root/.dotnet/tools/dotnet-ef --version \
+    && dotnet build -c Release PaParchar.Api/PaParchar.Api.csproj
+
+# Final image uses SDK because we need dotnet-ef
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS final
+WORKDIR /work
+ENV PATH="/root/.dotnet/tools:${PATH}"
+COPY --from=build /root/.dotnet/tools /root/.dotnet/tools
+COPY --from=build /src /work
+
+# Default entrypoint is shell; job will override command/args
+ENTRYPOINT ["/bin/sh", "-c"]
+

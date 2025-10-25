@@ -40,7 +40,8 @@ builder.Services
     .AddTransient<IUsuarioRepository, UsuarioRepository>()
     .AddTransient<IUsuarioService, UsuarioService>();
 
-builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
+// Use GCS for file storage in Cloud Run. Credentials come from the service account (ADC).
+builder.Services.AddSingleton<IFileStorageService, GCPBucketService>();
 
 builder.Services
     .AddTransient<ListParchesHandler>()
