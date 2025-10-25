@@ -26,6 +26,8 @@ namespace PaParchar.Infrastructure.Mapping
 
             CreateMap<CreateParcheHorarioDto, ParcheHorario>();
             CreateMap<ParcheHorario, CreateParcheHorarioDto>();
+            // Map images for ShowParcheDto projection
+            CreateMap<ParcheImagen, ParcheImagenDto>();
             
             CreateMap<string, TimeOnly>().ConvertUsing(s => ParseTimeString(s));
             CreateMap<TimeOnly, string>().ConvertUsing(t => t.ToString("HH:mm"));
