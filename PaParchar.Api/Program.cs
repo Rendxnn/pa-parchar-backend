@@ -67,7 +67,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 app.UseCors("AllowExpoClient");
-app.Urls.Add("http://*:5071");
 
     app.UseSwagger();
     app.UseSwaggerUI();
